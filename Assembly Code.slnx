@@ -1,7 +1,116 @@
-<Solution>
-  <Configurations>
-    <Platform Name="x64" />
-    <Platform Name="x86" />
-  </Configurations>
-  <Project Path="Coal Lab 07/Coal Lab 07.vcxproj" Id="2bb4ff34-759a-4a75-ad18-6755e04cb2d7" />
-</Solution>
+INCLUDE Irvine32.inc
+
+.data
+msg BYTE "This is a Plaintext message",0
+key BYTE "ABXmv#7",0
+
+m1 BYTE "Original Text: ",0
+m2 BYTE "Encrypted Text: ",0
+m3 BYTE "Decrypted Text: ",0
+
+.code
+main PROC
+
+    mov edx, OFFSET m1
+    call WriteString
+
+    mov edx, OFFSET msg
+    call WriteString
+    call Crlf
+    call Crlf
+
+
+    mov esi, OFFSET msg
+    mov edi, OFFSET key
+
+L1:
+    mov al, [esi]
+
+    cmp al, 0
+    je ShowEnc
+
+    mov bl, [edi]
+
+    cmp bl, 0
+    jne Next1
+
+    mov edi, OFFSET key
+    mov bl, [edi]
+
+Next1:
+    xor al, bl
+    mov [esi], al
+
+    inc esi
+    inc edi
+    jmp L1
+
+
+ShowEnc:
+
+    mov edx, OFFSET m2
+    call WriteString
+    call Crlf
+
+    mov esi, OFFSET msg
+
+L2:
+    mov al, [esi]
+
+    cmp al, 0
+    je DecStart
+
+    movzx eax, BYTE PTR [esi]
+    call WriteHex
+
+    mov al, ' '
+    call WriteChar
+
+    inc esi
+    jmp L2
+
+
+DecStart:
+
+    call Crlf
+    call Crlf
+
+    mov esi, OFFSET msg
+    mov edi, OFFSET key
+
+L3:
+    mov al, [esi]
+
+    cmp al, 0
+    je ShowDec
+
+    mov bl, [edi]
+
+    cmp bl, 0
+    jne Next2
+
+    mov edi, OFFSET key
+    mov bl, [edi]
+
+Next2:
+    xor al, bl
+    mov [esi], al
+
+    inc esi
+    inc edi
+    jmp L3
+
+
+ShowDec:
+
+    mov edx, OFFSET m3
+    call WriteString
+
+    mov edx, OFFSET msg
+    call WriteString
+    call Crlf
+
+    exit
+
+main ENDP
+END main
